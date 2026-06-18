@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="av">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Аварский корректор — corrector.avar.me">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Аварский корректор">
+  <meta property="og:description" content="Проверка и исправление аварских слов и текстов">
+  <meta property="og:url" content="https://corrector.avar.me">
+  <title>Аварский корректор — corrector.avar.me</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=d5b81aac">
+</head>
+<body>
+  <div class="bg-pattern" aria-hidden="true"></div>
+
+  <div class="container">
+    <header class="header">
+      <p class="header-tag"><a href="https://avar.me">avar.me</a></p>
+      <h1 class="title">Аварский<br><span class="dot">корректор</span></h1>
+      <p class="header-lead">Проверка орфографии и исправление текстов после OCR</p>
+    </header>
+
+    <!-- Loading state -->
+    <div id="loading" class="loading-bar">
+      <div class="loading-bar-inner"></div>
+      <p class="loading-text">Загрузка словаря…</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs" id="tabs" style="display:none">
+      <button class="tab active" data-tab="word">Слово</button>
+      <button class="tab" data-tab="text">Текст</button>
+    </div>
+
+    <!-- Word panel -->
+    <div id="panel-word" class="panel" style="display:none">
+      <div class="input-card">
+        <div class="input-wrapper">
+          <input
+            id="wordInput"
+            type="text"
+            class="main-input"
+            placeholder="Введите слово…"
+            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          >
+          <button id="wordClear" class="clear-btn" aria-label="Очистить">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M11 3L3 11M3 3l8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div id="wordResult" class="result-block"></div>
+    </div>
+
+    <!-- Text panel -->
+    <div id="panel-text" class="panel" style="display:none">
+      <div class="input-card">
+        <textarea
+          id="textInput"
+          class="main-textarea"
+          placeholder="Введите текст для проверки…"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          rows="6"
+        ></textarea>
+        <div class="textarea-footer">
+          <label class="checkbox-label">
+            <input type="checkbox" id="ocrMode">
+            <span>OCR-режим (применять замены букв)</span>
+          </label>
+          <button id="textCheck" class="btn btn-primary">Проверить</button>
+        </div>
+      </div>
+      <div id="textResult" class="result-block"></div>
+    </div>
+
+    <footer class="footer">
+      <p>
+        <a href="https://avar.me" target="_blank" rel="noopener">avar.me</a>
+        · <a href="https://github.com/avar-me/corrector" target="_blank" rel="noopener">github</a>
+        · <a href="mailto:admin@avar.me">admin@avar.me</a>
+      </p>
+    </footer>
+  </div>
+
+  <script>window.__DICT_ASSET_V__ = "d5b81aac";</script>
+  <script src="app.js?v=d5b81aac" charset="utf-8"></script>
+</body>
+</html>
