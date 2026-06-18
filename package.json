@@ -1,0 +1,12 @@
+{
+  "name": "avar-corrector",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js && npx --yes serve dist -l 3000"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
