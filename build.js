@@ -3,7 +3,7 @@
  * Fetches lemma_frequencies.csv and produces dist/ for GitHub Pages.
  */
 
-import { writeFileSync, mkdirSync, copyFileSync, readdirSync } from 'fs';
+import { writeFileSync, mkdirSync, copyFileSync, readdirSync, readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { createHash } from 'crypto';
@@ -52,21 +52,25 @@ async function main() {
   const count = Object.keys(dict).length;
   console.log(`Parsed ${count} lemmas.`);
 
-  // Build version hash from dict content for cache-busting
+  // Read src files up front so the cache-busting hash can cover both the
+  // dictionary and the code/assets — иначе правки в app.js/style.css не
+  // меняют ?v= и браузер отдаёт старую версию из кэша.
+  const srcFiles = readdirSync(SRC).map(file => ({
+    file,
+    content: readFileSync(join(SRC, file), 'utf8'),
+  }));
+
   const hash = createHash('md5')
     .update(JSON.stringify(dict))
+    .update(srcFiles.map(f => f.file + '\0' + f.content).join('\0'))
     .digest('hex')
     .slice(0, 8);
 
   writeFileSync(join(DIST, 'dictionary.json'), JSON.stringify(dict));
   console.log('Wrote dictionary.json');
 
-  // Copy all src files
-  for (const file of readdirSync(SRC)) {
-    const content = await import('fs').then(fs =>
-      fs.readFileSync(join(SRC, file), 'utf8')
-    );
-    // Inject asset version into HTML
+  // Copy all src files, injecting asset version into HTML
+  for (const { file, content } of srcFiles) {
     const out = file.endsWith('.html')
       ? content.replace(/__ASSET_VERSION__/g, hash)
       : content;
