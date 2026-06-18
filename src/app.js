@@ -59,7 +59,9 @@ function applyRules(text, rules) {
 }
 
 function normalizeWord(word) {
-  return applyRules(word.toLowerCase(), state.corrections.normalize || []);
+  // Правила сначала, lowercase потом: палочка в правилах записана заглавной
+  // латинской I (U+0049), а toLowerCase превратил бы её в i и сломал совпадение.
+  return applyRules(word, state.corrections.normalize || []).toLowerCase();
 }
 
 function applyOCR(text) {
