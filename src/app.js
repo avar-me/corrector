@@ -267,9 +267,11 @@ function renderTextResult(result) {
       return `<mark class="changed" title="${esc(p.original)} → ${esc(p.corrected)} (${pct}%, dist=${p.dist})">${esc(p.corrected)}</mark>`;
     }
     if (p.type === 'sep')     return esc(p.text).replace(/\n/g, '<br>');
-    if (p.type === 'unknown') return `<span style="color:var(--text-muted)">${esc(p.text)}</span>`;
+    if (p.type === 'unknown') return `<mark class="unknown" title="Нет в словаре, замена не найдена">${esc(p.text)}</mark>`;
     return esc(p.text);
   }).join('');
+
+  const unknownCount = result.parts.filter(p => p.type === 'unknown').length;
 
   // Plain corrected text (for copy)
   const plainText = result.parts.map(p =>
@@ -288,12 +290,21 @@ function renderTextResult(result) {
         <span class="change-meta">${(c.prob * 100).toFixed(0)}%</span>
         <span class="change-meta">dist=${c.dist}</span>
       </div>`).join('');
-    changesHtml = `
+    changesHtml += `
       <div class="changes-card">
         <div class="changes-title">Исправления (${result.changes.length})</div>
         ${rows}
       </div>`;
-  } else {
+  }
+
+  if (unknownCount > 0) {
+    changesHtml += `
+      <div class="changes-card">
+        <div class="unknown-note"><span class="unknown-dot">⚠</span> Не найдено в словаре: ${unknownCount}</div>
+      </div>`;
+  }
+
+  if (!changesHtml) {
     changesHtml = `
       <div class="changes-card">
         <div class="no-changes">✓ Исправлений нет</div>

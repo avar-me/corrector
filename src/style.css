@@ -225,6 +225,14 @@ mark.changed {
 }
 mark.changed[title] { cursor: help; }
 
+mark.unknown {
+  background: var(--err-soft); color: var(--err);
+  border-radius: 3px; padding: 0 2px;
+  text-decoration: underline wavy; text-underline-offset: 3px;
+  text-decoration-color: rgba(183, 28, 28, 0.55);
+  cursor: help;
+}
+
 .changes-card {
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden;
@@ -251,6 +259,13 @@ mark.changed[title] { cursor: help; }
   padding: 1rem 1.1rem; color: var(--text-muted); font-size: 0.9rem; text-align: center;
   display: flex; align-items: center; justify-content: center; gap: 0.5rem;
 }
+
+/* Unknown words note */
+.unknown-note {
+  padding: 0.8rem 1.1rem; color: var(--err); font-size: 0.9rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.unknown-dot { font-size: 0.95rem; }
 
 /* Error state */
 .error-msg { padding: 1rem; background: var(--err-soft); border: 1px solid rgba(183,28,28,0.2); border-radius: var(--radius); color: var(--err); font-size: 0.9rem; }
