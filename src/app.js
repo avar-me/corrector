@@ -180,12 +180,9 @@ function correctText(text, useOCR) {
 
     if (res.found) {
       const normalized = normalizeWord(token);
-      if (normalized !== token.toLowerCase()) {
-        changes.push({ from: token, to: normalized, prob: 1, dist: 0, type: 'normalize' });
-        parts.push({ type: 'changed', original: token, corrected: normalized, prob: 1, dist: 0 });
-      } else {
-        parts.push({ type: 'word', text: token });
-      }
+      // Палочка-нормализация (I/1/l → ӏ) применяется молча: правим в выводе,
+      // но не считаем ошибкой и не показываем как исправление.
+      parts.push({ type: 'word', text: normalized !== token.toLowerCase() ? normalized : token });
       continue;
     }
 
