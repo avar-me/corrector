@@ -193,7 +193,7 @@ function correctText(text, useOCR) {
       changes.push({ from: token, to: best.word, prob: best.prob, dist: best.dist, type: 'spell' });
       parts.push({ type: 'changed', original: token, corrected: best.word, prob: best.prob, dist: best.dist });
     } else {
-      parts.push({ type: 'unknown', text: token });
+      parts.push({ type: 'unknown', text: token, suggestions: res.suggestions.slice(0, 2) });
     }
   }
 
@@ -298,9 +298,23 @@ function renderTextResult(result) {
   }
 
   if (unknownCount > 0) {
+    const unknownRows = result.parts.filter(p => p.type === 'unknown').map(p => {
+      const variants = p.suggestions.length > 0
+        ? p.suggestions.map(s =>
+            `<span class="variant-word">${esc(s.word)}</span><span class="change-meta">${(s.prob * 100).toFixed(0)}%</span>`
+          ).join('<span class="change-arrow">/</span>')
+        : '<span class="no-variants">нет вариантов</span>';
+      return `
+        <div class="change-row unknown-row">
+          <span class="change-from">${esc(p.text)}</span>
+          <span class="change-arrow">→</span>
+          <span class="unknown-variants">${variants}</span>
+        </div>`;
+    }).join('');
     changesHtml += `
       <div class="changes-card">
-        <div class="unknown-note"><span class="unknown-dot">⚠</span> Не найдено в словаре: ${unknownCount}</div>
+        <div class="changes-title"><span class="unknown-dot">⚠</span> Не найдено в словаре (${unknownCount})</div>
+        ${unknownRows}
       </div>`;
   }
 

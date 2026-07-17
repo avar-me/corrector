@@ -261,11 +261,15 @@ mark.unknown {
 }
 
 /* Unknown words note */
-.unknown-note {
-  padding: 0.8rem 1.1rem; color: var(--err); font-size: 0.9rem;
-  display: flex; align-items: center; gap: 0.5rem;
-}
 .unknown-dot { font-size: 0.95rem; }
+.unknown-row { grid-template-columns: 1fr auto 2fr; }
+.unknown-row .change-from { color: var(--err); }
+.unknown-variants {
+  font-family: var(--font-serif); color: var(--text-primary);
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem;
+}
+.variant-word { font-weight: 600; }
+.no-variants { color: var(--text-muted); font-family: var(--font-mono); font-size: 0.8rem; }
 
 /* Error state */
 .error-msg { padding: 1rem; background: var(--err-soft); border: 1px solid rgba(183,28,28,0.2); border-radius: var(--radius); color: var(--err); font-size: 0.9rem; }
