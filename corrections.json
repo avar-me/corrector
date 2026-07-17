@@ -40,5 +40,11 @@
   "ocr": [
     { "pattern": "П",   "replacement": "ГӀ",  "note": "OCR visual confusion п/гӏ" },
     { "pattern": "п",   "replacement": "гӏ",  "note": "OCR visual confusion" }
+  ],
+  "letters": [
+    { "pattern": "пӏ",  "replacement": "б",   "note": "ошибочное пӏ вместо б (применяется после lowercase, регистр учтён)" }
+  ],
+  "words": [
+    { "pattern": "дий", "replacement": "дие" }
   ]
 }

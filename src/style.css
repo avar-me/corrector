@@ -164,6 +164,10 @@ a:hover { color: var(--link-hover); text-decoration: underline; }
 .status-icon { font-size: 1.1rem; flex-shrink: 0; }
 .status-word { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 600; }
 .status-freq { color: var(--text-muted); font-size: 0.82rem; font-family: var(--font-mono); }
+.status-forced {
+  color: var(--accent); font-size: 0.82rem; font-family: var(--font-mono);
+  margin-left: auto;
+}
 
 .suggestions-card {
   background: var(--bg-card); border: 1px solid var(--border);
@@ -253,6 +257,7 @@ mark.unknown {
 .change-arrow { color: var(--text-dim); font-size: 0.8rem; }
 .change-to { font-family: var(--font-serif); font-weight: 600; color: var(--ok); }
 .change-meta { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim); }
+.forced-badge { color: var(--accent); }
 
 /* No changes */
 .no-changes {

@@ -68,6 +68,17 @@ function applyOCR(text) {
   return applyRules(text, state.corrections.ocr || []);
 }
 
+// Обязательные замены — применяются всегда (не только в OCR-режиме) и,
+// в отличие от normalize, считаются исправлением и показываются пользователю.
+function applyMandatory(word) {
+  let out = applyRules(word, state.corrections.letters || []);
+
+  const wordRule = (state.corrections.words || []).find(r => r.pattern === out);
+  if (wordRule) out = wordRule.replacement;
+
+  return out;
+}
+
 // ============================================================================
 // SPELL CHECKER — candidate generation
 // ============================================================================
@@ -105,10 +116,12 @@ function candidateScore(freq, dist) {
 function checkWord(raw) {
   if (!state.ready) return null;
 
-  const normalized = normalizeWord(raw);
+  const beforeMandatory = normalizeWord(raw);
+  const normalized = applyMandatory(beforeMandatory);
+  const forcedFrom = normalized !== beforeMandatory ? beforeMandatory : null;
 
   if (state.dict[normalized] !== undefined) {
-    return { found: true, word: normalized, freq: state.dict[normalized] };
+    return { found: true, word: normalized, freq: state.dict[normalized], forcedFrom };
   }
 
   // Gather candidates
@@ -181,6 +194,13 @@ function correctText(text, useOCR) {
     if (!res) { parts.push({ type: 'word', text: token }); continue; }
 
     if (res.found) {
+      if (res.forcedFrom) {
+        // Обязательная замена буквы/слова (например пӏ → б, дий → дие):
+        // показываем как исправление, в отличие от тихой палочка-нормализации.
+        changes.push({ from: token, to: res.word, type: 'forced' });
+        parts.push({ type: 'changed', original: token, corrected: res.word, forced: true });
+        continue;
+      }
       const normalized = normalizeWord(token);
       // Палочка-нормализация (I/1/l → ӏ) применяется молча: правим в выводе,
       // но не считаем ошибкой и не показываем как исправление.
@@ -209,11 +229,15 @@ function renderWordResult(raw, res) {
   if (!res) { el.innerHTML = ''; return; }
 
   if (res.found) {
+    const forcedNote = res.forcedFrom
+      ? `<span class="status-forced">обязательная замена: ${esc(res.forcedFrom)} → ${esc(res.word)}</span>`
+      : '';
     el.innerHTML = `
       <div class="word-status found">
         <span class="status-icon">✓</span>
         <span class="status-word">${esc(res.word)}</span>
         <span class="status-freq">freq ${res.freq.toLocaleString()}</span>
+        ${forcedNote}
       </div>`;
     return;
   }
@@ -263,8 +287,10 @@ function renderTextResult(result) {
   // Build annotated text
   const textParts = result.parts.map(p => {
     if (p.type === 'changed') {
-      const pct = (p.prob * 100).toFixed(0);
-      return `<mark class="changed" title="${esc(p.original)} → ${esc(p.corrected)} (${pct}%, dist=${p.dist})">${esc(p.corrected)}</mark>`;
+      const title = p.forced
+        ? `${esc(p.original)} → ${esc(p.corrected)} (обязательная замена)`
+        : `${esc(p.original)} → ${esc(p.corrected)} (${(p.prob * 100).toFixed(0)}%, dist=${p.dist})`;
+      return `<mark class="changed" title="${title}">${esc(p.corrected)}</mark>`;
     }
     if (p.type === 'sep')     return esc(p.text).replace(/\n/g, '<br>');
     if (p.type === 'unknown') return `<mark class="unknown" title="Нет в словаре, замена не найдена">${esc(p.text)}</mark>`;
@@ -287,8 +313,9 @@ function renderTextResult(result) {
         <span class="change-from">${esc(c.from)}</span>
         <span class="change-arrow">→</span>
         <span class="change-to">${esc(c.to)}</span>
-        <span class="change-meta">${(c.prob * 100).toFixed(0)}%</span>
-        <span class="change-meta">dist=${c.dist}</span>
+        ${c.type === 'forced'
+          ? '<span class="change-meta forced-badge">обязательная замена</span>'
+          : `<span class="change-meta">${(c.prob * 100).toFixed(0)}%</span><span class="change-meta">dist=${c.dist}</span>`}
       </div>`).join('');
     changesHtml += `
       <div class="changes-card">
